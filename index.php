@@ -5,10 +5,6 @@ require 'Slim/Slim.php';
 
 \Slim\Slim::registerAutoloader();
 
-// 初始化数据库连接
-R::setup('mysql:host=localhost;dbname=mysql','root','871105');
-R::freeze(true);
-
 $app = new \Slim\Slim();
 
 // GET route
