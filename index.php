@@ -6,7 +6,7 @@ require 'Slim/Slim.php';
 
 $app = new \Slim\Slim();
 
-// GET route
+// 简单测试，判断slim框架运行正常
 $app->get(
 '/',
 function () {
@@ -14,10 +14,11 @@ function () {
 }
 );
 
-// GET /leds
+// GET /leds 获得所有LED记录信息
+// GET /leds?page=1&rows=10
 $app->get('/leds', function () use ($app) { 
     
-    // 设置分页
+    // 设置分页 默认返回10条记录
     $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
     $rows = isset($_GET['rows']) ? intval($_GET['rows']) : 10;
     $offset = ($page-1)*$rows;
@@ -44,14 +45,12 @@ $app->get('/leds', function () use ($app) {
     $result["rows"] = $items;
   
     // var_dump($result);
-    
     // JSON 输出
     $app->response()->header('Content-Type', 'application/json');
     echo json_encode($result, JSON_NUMERIC_CHECK);
-
 });
 
-// GET /leds/:id 返回所有信息
+// GET /leds/:id 返回指定LED信息
 $app->get('/leds/:id', function ($id) use ($app) { 
 
     // 连接数据库
@@ -71,7 +70,7 @@ $app->get('/leds/:id', function ($id) use ($app) {
     }
 });
 
-// GET /leds/:id/status 仅返回status
+// GET /leds/:id/status 仅返回指定LED的status信息
 $app->get('/leds/:id/status', function ($id) use ($app) { 
 
   // 连接数据库
@@ -91,7 +90,7 @@ $app->get('/leds/:id/status', function ($id) use ($app) {
   }
 });
 
-// POST /leds 创建一个LED设备
+// POST /leds 创建一个新LED设备
 $app->post('/leds', function () use ($app) {    
 
   // 获得并解析获得的JSON数据包
@@ -119,7 +118,7 @@ $app->post('/leds', function () use ($app) {
   }
 });
 
-// PUT /leds/:id 更新内容
+// PUT /leds/:id 更新指定LED内容，全部更新
 $app->put('/leds/:id', function ($id) use ($app) {  
   
   // 获得HTTP请求中的JSON数据包
@@ -139,13 +138,15 @@ $app->put('/leds/:id', function ($id) use ($app) {
   // 查询数据库
   $result = @mysql_query($sql);
   if ($result){
+    // 更新成功
     echo json_encode(array('success'=>true));
   } else {
+    // 更新失败
     echo json_encode(array('success'=>false));
   }
 });
 
-// PUT /leds/:id/status 更新内容
+// PUT /leds/:id/status 更新LED记录，仅更新status
 $app->put('/leds/:id/status', function ($id) use ($app) {  
   
   // 获得HTTP请求中的JSON数据包
@@ -171,7 +172,7 @@ $app->put('/leds/:id/status', function ($id) use ($app) {
   }
 });
 
-// Delect /leds/:id   删除内容
+// Delect /leds/:id   删除LED记录
 $app->delete('/leds/:id', function ($id) use ($app) {  
   
   // 连接数据库
@@ -183,8 +184,10 @@ $app->delete('/leds/:id', function ($id) use ($app) {
   // 查询数据库
   $result = @mysql_query($sql);
   if ($result){
+    // 删除成功
     echo json_encode(array('success'=>true));
   } else {
+    // 删除失败
     echo json_encode(array('success'=>false));
   }
 });
